@@ -2,7 +2,7 @@ import { GradeCalculation } from '@/types'
 import './GradeResult.css'
 
 interface GradeResultProps {
-  calculation: GradeCalculation
+  calculation: GradeCalculation | null
 }
 
 const GradeResult = ({ calculation }: GradeResultProps) => {
@@ -26,7 +26,7 @@ const GradeResult = ({ calculation }: GradeResultProps) => {
     <div className="grade-result-card">
       <h2>Resultado del Promedio</h2>
       
-      {calculation.totalCredits > 0 ? (
+      {calculation && calculation.totalCredits > 0 ? (
         <div className="result-content">
           <div className={`average-display ${getGradeColor(calculation.average)}`}>
             <div className="average-number">{calculation.average.toFixed(2)}</div>
@@ -53,7 +53,7 @@ const GradeResult = ({ calculation }: GradeResultProps) => {
       ) : (
         <div className="no-data">
           <div className="no-data-icon">📊</div>
-          <p>Agrega materias para ver tu promedio</p>
+          <p>Agrega materias y haz clic en "Calcular Promedio"</p>
         </div>
       )}
     </div>

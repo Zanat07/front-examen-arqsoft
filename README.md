@@ -79,8 +79,10 @@ La aplicación se comunica con un backend mediante las siguientes endpoints:
 - `PUT /api/subjects/:id` - Actualizar una materia
 - `DELETE /api/subjects/:id` - Eliminar una materia
 
-### Cálculos
-- `POST /api/calculations` - Enviar cálculo completo
+### Cálculo de Promedio
+- `POST /api/calculate` - **Calcular promedio ponderado** (el cálculo se hace en el backend)
+  
+  **Request:**
   ```json
   {
     "subjects": [
@@ -88,12 +90,26 @@ La aplicación se comunica con un backend mediante las siguientes endpoints:
         "name": "Matemáticas",
         "grade": 4.5,
         "credits": 3
+      },
+      {
+        "name": "Física",
+        "grade": 4.0,
+        "credits": 4
       }
-    ],
-    "totalAverage": 4.5,
-    "totalCredits": 3
+    ]
   }
   ```
+  
+  **Response:**
+  ```json
+  {
+    "weightedSum": 28.5,
+    "totalCredits": 7,
+    "average": 4.07
+  }
+  ```
+
+> **Importante:** El cálculo del promedio ponderado se realiza completamente en el backend. El frontend solo envía las materias con sus notas y créditos, y recibe el resultado calculado.
 
 ## 🎯 Uso
 
@@ -106,19 +122,26 @@ La aplicación se comunica con un backend mediante las siguientes endpoints:
 - **Nota**: Ingresa la nota obtenida (escala 0-5)
 - **Créditos**: Especifica el número de créditos de la materia
 - Haz clic en "Agregar Materia"
+- Las materias se envían automáticamente al backend
 
-### 3. Ver Resultados
-- El promedio se calcula automáticamente usando la fórmula ponderada
+### 3. Calcular Promedio
+- Una vez agregadas las materias, haz clic en **"Calcular Promedio"**
+- El cálculo se realiza en el backend y muestra:
+  - Promedio ponderado final
+  - Suma ponderada total
+  - Total de créditos
+  - Fórmula aplicada
 - Los colores indican el nivel de rendimiento:
-  - 🟢 **Verde (4.5-5.0)**: Excelente
-  - 🔵 **Azul (4.0-4.4)**: Bueno
-  - 🟡 **Amarillo (3.5-3.9)**: Regular
-  - 🟠 **Naranja (3.0-3.4)**: Bajo
+  - 🟢 **Verde oliva (4.5-5.0)**: Excelente
+  - 🟡 **Dorado (4.0-4.4)**: Bueno
+  - 🟠 **Naranja (3.5-3.9)**: Regular
+  - 🟤 **Café (3.0-3.4)**: Bajo
   - 🔴 **Rojo (0-2.9)**: Insuficiente
 
 ### 4. Gestionar Materias
 - **Eliminar**: Haz clic en la "✕" junto a cada materia
 - **Limpiar todo**: Usa el botón "Limpiar Todo" para reiniciar
+- Cada acción se sincroniza con el backend
 
 ## 🏗️ Estructura del Proyecto
 

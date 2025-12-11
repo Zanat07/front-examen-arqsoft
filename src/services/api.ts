@@ -10,8 +10,12 @@ export interface SubjectPayload {
 
 export interface CalculationPayload {
   subjects: SubjectPayload[]
-  totalAverage?: number
-  totalCredits?: number
+}
+
+export interface CalculationResponse {
+  weightedSum: number
+  totalCredits: number
+  average: number
 }
 
 // Enviar una materia individual al backend
@@ -40,10 +44,10 @@ export const submitSubject = async (subject: SubjectPayload): Promise<any> => {
   }
 }
 
-// Enviar todas las materias con el cálculo final
-export const submitCalculation = async (payload: CalculationPayload): Promise<any> => {
+// Enviar todas las materias para cálculo en el backend
+export const calculateGrades = async (payload: CalculationPayload): Promise<CalculationResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/calculations`, {
+    const response = await fetch(`${API_BASE_URL}/calculate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -52,12 +56,12 @@ export const submitCalculation = async (payload: CalculationPayload): Promise<an
     })
 
     if (!response.ok) {
-      throw new Error(`Error al enviar el cálculo: ${response.statusText}`)
+      throw new Error(`Error al calcular el promedio: ${response.statusText}`)
     }
 
     return await response.json()
   } catch (error) {
-    console.error('Error en submitCalculation:', error)
+    console.error('Error en calculateGrades:', error)
     throw error
   }
 }

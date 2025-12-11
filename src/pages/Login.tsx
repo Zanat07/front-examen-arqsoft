@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { User } from '@/types'
+import logo from '@/imgs/Escudo_de_la_Universidad_Nacional_de_Colombia_(2016).svg.png'
 import './Login.css'
 
 interface LoginProps {
@@ -38,7 +39,7 @@ const Login = ({ onLogin, onGoToRegister }: LoginProps) => {
       <div className="login-card">
         <div className="login-header">
           <div className="logo-placeholder">
-            <div className="logo-icon">📚</div>
+            <img src={logo} alt="Universidad Nacional de Colombia" className="logo-image" />
           </div>
           <h1>Calculadora de Promedio</h1>
           <p>Inicia sesión para calcular tu promedio académico</p>
