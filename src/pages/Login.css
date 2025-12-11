@@ -35,6 +35,15 @@
 
 .logo-placeholder {
   margin-bottom: var(--spacing-4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-image {
+  width: 120px;
+  height: auto;
+  margin-bottom: var(--spacing-2);
 }
 
 .logo-icon {

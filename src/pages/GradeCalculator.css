@@ -27,6 +27,11 @@
   gap: var(--spacing-3);
 }
 
+.header-logo {
+  height: 50px;
+  width: auto;
+}
+
 .logo-icon {
   font-size: 2rem;
   color: var(--accent-color);

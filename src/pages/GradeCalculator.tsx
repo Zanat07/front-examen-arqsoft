@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Subject } from '@/types'
-import { calculateWeightedAverage, generateSubjectId } from '@/utils/gradeCalculator'
-import { submitSubject, submitCalculation, getSubjects, deleteSubject } from '@/services/api'
+import { Subject, GradeCalculation } from '@/types'
+import { generateSubjectId } from '@/utils/gradeCalculator'
+import { submitSubject, calculateGrades, getSubjects, deleteSubject } from '@/services/api'
+import logo from '@/imgs/Escudo_de_la_Universidad_Nacional_de_Colombia_(2016).svg.png'
 import SubjectForm from '@/components/SubjectForm'
 import SubjectList from '@/components/SubjectList'
 import GradeResult from '@/components/GradeResult'
@@ -13,7 +14,9 @@ interface GradeCalculatorProps {
 
 const GradeCalculator = ({ onLogout }: GradeCalculatorProps) => {
   const [subjects, setSubjects] = useState<Subject[]>([])
+  const [calculation, setCalculation] = useState<GradeCalculation | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isCalculating, setIsCalculating] = useState(false)
 
   // Cargar materias al montar el componente
   useEffect(() => {
@@ -56,6 +59,9 @@ const GradeCalculator = ({ onLogout }: GradeCalculatorProps) => {
   const removeSubject = async (id: string) => {
     // Actualizar UI inmediatamente
     setSubjects(prev => prev.filter(subject => subject.id !== id))
+    
+    // Limpiar el cálculo ya que cambió la lista
+    setCalculation(null)
 
     // Eliminar del backend
     try {
@@ -70,6 +76,7 @@ const GradeCalculator = ({ onLogout }: GradeCalculatorProps) => {
     
     // Limpiar UI inmediatamente
     setSubjects([])
+    setCalculation(null)
 
     // Intentar eliminar del backend
     try {
@@ -79,35 +86,39 @@ const GradeCalculator = ({ onLogout }: GradeCalculatorProps) => {
     }
   }
 
-  const handleSubmitCalculation = async () => {
+  const handleCalculateGrades = async () => {
+    if (subjects.length === 0) {
+      alert('Por favor agrega al menos una materia')
+      return
+    }
+
+    setIsCalculating(true)
+    
     try {
-      const calculation = calculateWeightedAverage(subjects)
       const payload = {
         subjects: subjects.map(s => ({
           name: s.name,
           grade: s.grade,
           credits: s.credits
-        })),
-        totalAverage: calculation.average,
-        totalCredits: calculation.totalCredits
+        }))
       }
 
-      await submitCalculation(payload)
-      alert('Cálculo enviado exitosamente al backend')
+      const result = await calculateGrades(payload)
+      setCalculation(result)
     } catch (error) {
-      console.error('Error al enviar cálculo:', error)
-      alert('Error al enviar el cálculo')
+      console.error('Error al calcular:', error)
+      alert('Error al calcular el promedio. Verifica que el backend esté disponible.')
+    } finally {
+      setIsCalculating(false)
     }
   }
-
-  const calculation = calculateWeightedAverage(subjects)
 
   return (
     <div className="calculator-container">
       <header className="calculator-header">
         <div className="header-content">
           <div className="logo-section">
-            <div className="logo-icon">📚</div>
+            <img src={logo} alt="Universidad Nacional de Colombia" className="header-logo" />
             <h1>Calculadora de Promedio Académico</h1>
           </div>
           <button onClick={onLogout} className="logout-button">
@@ -128,16 +139,16 @@ const GradeCalculator = ({ onLogout }: GradeCalculatorProps) => {
             {subjects.length > 0 && (
               <div className="actions-section">
                 <button 
-                  onClick={handleSubmitCalculation}
+                  onClick={handleCalculateGrades}
                   className="submit-button"
-                  disabled={isLoading}
+                  disabled={isLoading || isCalculating}
                 >
-                  Enviar Cálculo
+                  {isCalculating ? 'Calculando...' : 'Calcular Promedio'}
                 </button>
                 <button 
                   onClick={clearAllSubjects}
                   className="clear-button"
-                  disabled={isLoading}
+                  disabled={isLoading || isCalculating}
                 >
                   Limpiar Todo
                 </button>
