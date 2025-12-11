@@ -1,13 +1,35 @@
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import GradeCalculator from './pages/GradeCalculator'
+import { isAuthenticated as checkAuth, removeToken } from './services/api'
 import './App.css'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(checkAuth())
   const navigate = useNavigate()
+
+  // Check authentication status on mount
+  useEffect(() => {
+    setIsAuthenticated(checkAuth())
+  }, [])
+
+  const handleLogin = () => {
+    setIsAuthenticated(true)
+    navigate('/calculator')
+  }
+
+  const handleRegister = () => {
+    // After registration, redirect to login
+    navigate('/login')
+  }
+
+  const handleLogout = () => {
+    removeToken()
+    setIsAuthenticated(false)
+    navigate('/login')
+  }
 
   return (
     <div className="app">
@@ -18,7 +40,7 @@ function App() {
             isAuthenticated ? 
             <Navigate to="/calculator" replace /> : 
             <Login 
-              onLogin={() => setIsAuthenticated(true)} 
+              onLogin={handleLogin} 
               onGoToRegister={() => navigate('/register')}
             />
           } 
@@ -29,10 +51,7 @@ function App() {
             isAuthenticated ? 
             <Navigate to="/calculator" replace /> : 
             <Register 
-              onRegister={() => {
-                setIsAuthenticated(true)
-                navigate('/calculator')
-              }} 
+              onRegister={handleRegister} 
               onGoToLogin={() => navigate('/login')}
             />
           } 
@@ -41,7 +60,7 @@ function App() {
           path="/calculator" 
           element={
             isAuthenticated ? 
-            <GradeCalculator onLogout={() => setIsAuthenticated(false)} /> : 
+            <GradeCalculator onLogout={handleLogout} /> : 
             <Navigate to="/login" replace />
           } 
         />

@@ -22,30 +22,39 @@ const GradeResult = ({ calculation }: GradeResultProps) => {
     return 'Insuficiente'
   }
 
+  // Calculate weighted sum from subjects
+  const getWeightedSum = (calculation: GradeCalculation) => {
+    return calculation.subjects.reduce((sum, subject) => sum + subject.weighted_grade, 0)
+  }
+
   return (
     <div className="grade-result-card">
       <h2>Resultado del Promedio</h2>
       
-      {calculation && calculation.totalCredits > 0 ? (
+      {calculation && calculation.total_credits > 0 ? (
         <div className="result-content">
-          <div className={`average-display ${getGradeColor(calculation.average)}`}>
-            <div className="average-number">{calculation.average.toFixed(2)}</div>
-            <div className="average-label">{getGradeLabel(calculation.average)}</div>
+          <div className={`average-display ${getGradeColor(calculation.semester_gpa)}`}>
+            <div className="average-number">{calculation.semester_gpa.toFixed(2)}</div>
+            <div className="average-label">{getGradeLabel(calculation.semester_gpa)}</div>
+          </div>
+          
+          <div className="message-section">
+            <p className="result-message">{calculation.message}</p>
           </div>
           
           <div className="calculation-details">
             <div className="detail-item">
               <span className="detail-label">Suma Ponderada:</span>
-              <span className="detail-value">{calculation.weightedSum.toFixed(2)}</span>
+              <span className="detail-value">{getWeightedSum(calculation).toFixed(2)}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Total Créditos:</span>
-              <span className="detail-value">{calculation.totalCredits}</span>
+              <span className="detail-value">{calculation.total_credits}</span>
             </div>
             <div className="detail-item formula">
               <span className="detail-label">Fórmula:</span>
               <span className="detail-value">
-                {calculation.weightedSum.toFixed(2)} ÷ {calculation.totalCredits} = {calculation.average.toFixed(2)}
+                {getWeightedSum(calculation).toFixed(2)} ÷ {calculation.total_credits} = {calculation.semester_gpa.toFixed(2)}
               </span>
             </div>
           </div>
