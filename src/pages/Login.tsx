@@ -4,9 +4,10 @@ import './Login.css'
 
 interface LoginProps {
   onLogin: () => void
+  onGoToRegister: () => void
 }
 
-const Login = ({ onLogin }: LoginProps) => {
+const Login = ({ onLogin, onGoToRegister }: LoginProps) => {
   const [credentials, setCredentials] = useState<User>({
     username: '',
     password: ''
@@ -74,6 +75,13 @@ const Login = ({ onLogin }: LoginProps) => {
             Iniciar Sesión
           </button>
         </form>
+
+        <div className="register-link">
+          <p>¿No tienes una cuenta?</p>
+          <button type="button" onClick={onGoToRegister} className="link-button">
+            Registrarse
+          </button>
+        </div>
       </div>
     </div>
   )
