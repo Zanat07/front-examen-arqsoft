@@ -95,6 +95,21 @@
   letter-spacing: 0.05em;
 }
 
+.message-section {
+  text-align: center;
+  padding: var(--spacing-3);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+.result-message {
+  font-size: var(--font-size-base);
+  color: var(--gray-700);
+  font-style: italic;
+  margin: 0;
+}
+
 .calculation-details {
   display: flex;
   flex-direction: column;

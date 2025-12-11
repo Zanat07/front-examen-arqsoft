@@ -10,8 +10,17 @@ export interface User {
   password: string
 }
 
+// Backend response types
+export interface SubjectResult {
+  name: string
+  grade: number
+  credits: number
+  weighted_grade: number
+}
+
 export interface GradeCalculation {
-  weightedSum: number
-  totalCredits: number
-  average: number
+  subjects: SubjectResult[]
+  total_credits: number
+  semester_gpa: number
+  message: string
 }

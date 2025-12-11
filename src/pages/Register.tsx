@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User } from '@/types'
+import { register, RegisterRequest } from '@/services/api'
 import './Register.css'
 
 interface RegisterProps {
@@ -8,52 +8,87 @@ interface RegisterProps {
 }
 
 const Register = ({ onRegister, onGoToLogin }: RegisterProps) => {
-  const [credentials, setCredentials] = useState<User>({
-    username: '',
-    password: ''
+  const [formData, setFormData] = useState<RegisterRequest>({
+    nombres: '',
+    apellidos: '',
+    correo_institucional: '',
+    dni: '',
+    contrasena: ''
   })
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     
-    if (!credentials.username.trim()) {
-      setError('Por favor, ingresa tu correo electrónico')
+    // Validations
+    if (!formData.nombres.trim()) {
+      setError('Por favor, ingresa tus nombres')
       return
     }
 
-    if (!validateEmail(credentials.username)) {
+    if (!formData.apellidos.trim()) {
+      setError('Por favor, ingresa tus apellidos')
+      return
+    }
+
+    if (!formData.correo_institucional.trim()) {
+      setError('Por favor, ingresa tu correo institucional')
+      return
+    }
+
+    if (!validateEmail(formData.correo_institucional)) {
       setError('Por favor, ingresa un correo electrónico válido')
       return
     }
 
-    if (!credentials.password.trim()) {
+    if (!formData.dni.trim()) {
+      setError('Por favor, ingresa tu número de documento (DNI)')
+      return
+    }
+
+    if (!/^\d+$/.test(formData.dni)) {
+      setError('El DNI debe contener solo números')
+      return
+    }
+
+    if (!formData.contrasena.trim()) {
       setError('Por favor, ingresa una contraseña')
       return
     }
 
-    if (credentials.password.length < 6) {
+    if (formData.contrasena.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres')
       return
     }
 
-    if (credentials.password !== confirmPassword) {
+    if (formData.contrasena !== confirmPassword) {
       setError('Las contraseñas no coinciden')
       return
     }
 
-    // Registro exitoso
-    onRegister()
+    setIsLoading(true)
+
+    try {
+      await register(formData)
+      onRegister()
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al registrar'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleInputChange = (field: keyof User, value: string) => {
-    setCredentials(prev => ({
+  const handleInputChange = (field: keyof RegisterRequest, value: string) => {
+    setFormData(prev => ({
       ...prev,
       [field]: value
     }))
@@ -72,15 +107,57 @@ const Register = ({ onRegister, onGoToLogin }: RegisterProps) => {
         </div>
 
         <form onSubmit={handleSubmit} className="register-form">
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="nombres">Nombres</label>
+              <input
+                id="nombres"
+                type="text"
+                value={formData.nombres}
+                onChange={(e) => handleInputChange('nombres', e.target.value)}
+                placeholder="Ingresa tus nombres"
+                className={error ? 'error' : ''}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="apellidos">Apellidos</label>
+              <input
+                id="apellidos"
+                type="text"
+                value={formData.apellidos}
+                onChange={(e) => handleInputChange('apellidos', e.target.value)}
+                placeholder="Ingresa tus apellidos"
+                className={error ? 'error' : ''}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
           <div className="form-group">
-            <label htmlFor="email">Correo Electrónico</label>
+            <label htmlFor="email">Correo Institucional</label>
             <input
               id="email"
               type="email"
-              value={credentials.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              placeholder="ejemplo@correo.com"
+              value={formData.correo_institucional}
+              onChange={(e) => handleInputChange('correo_institucional', e.target.value)}
+              placeholder="usuario@unal.edu.co"
               className={error ? 'error' : ''}
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="dni">Documento de Identidad (DNI)</label>
+            <input
+              id="dni"
+              type="text"
+              value={formData.dni}
+              onChange={(e) => handleInputChange('dni', e.target.value)}
+              placeholder="Ingresa tu número de documento"
+              className={error ? 'error' : ''}
+              disabled={isLoading}
             />
           </div>
 
@@ -89,10 +166,11 @@ const Register = ({ onRegister, onGoToLogin }: RegisterProps) => {
             <input
               id="password"
               type="password"
-              value={credentials.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
+              value={formData.contrasena}
+              onChange={(e) => handleInputChange('contrasena', e.target.value)}
               placeholder="Mínimo 6 caracteres"
               className={error ? 'error' : ''}
+              disabled={isLoading}
             />
           </div>
 
@@ -108,19 +186,20 @@ const Register = ({ onRegister, onGoToLogin }: RegisterProps) => {
               }}
               placeholder="Repite tu contraseña"
               className={error ? 'error' : ''}
+              disabled={isLoading}
             />
           </div>
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="register-button">
-            Registrarse
+          <button type="submit" className="register-button" disabled={isLoading}>
+            {isLoading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
 
         <div className="login-link">
           <p>¿Ya tienes una cuenta?</p>
-          <button type="button" onClick={onGoToLogin} className="link-button">
+          <button type="button" onClick={onGoToLogin} className="link-button" disabled={isLoading}>
             Iniciar Sesión
           </button>
         </div>

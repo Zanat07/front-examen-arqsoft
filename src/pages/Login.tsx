@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { User } from '@/types'
+import { login, saveToken, LoginRequest } from '@/services/api'
 import logo from '@/imgs/Escudo_de_la_Universidad_Nacional_de_Colombia_(2016).svg.png'
 import './Login.css'
 
@@ -9,24 +9,43 @@ interface LoginProps {
 }
 
 const Login = ({ onLogin, onGoToRegister }: LoginProps) => {
-  const [credentials, setCredentials] = useState<User>({
-    username: '',
-    password: ''
+  const [credentials, setCredentials] = useState<LoginRequest>({
+    correo_institucional: '',
+    contrasena: ''
   })
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     
-    // Simple validation - in a real app, this would be handled by a backend
-    if (credentials.username.trim() && credentials.password.trim()) {
+    // Validation
+    if (!credentials.correo_institucional.trim()) {
+      setError('Por favor, ingresa tu correo institucional')
+      return
+    }
+
+    if (!credentials.contrasena.trim()) {
+      setError('Por favor, ingresa tu contraseña')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const response = await login(credentials)
+      saveToken(response.access_token)
       onLogin()
-    } else {
-      setError('Por favor, completa todos los campos')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al iniciar sesión'
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const handleInputChange = (field: keyof User, value: string) => {
+  const handleInputChange = (field: keyof LoginRequest, value: string) => {
     setCredentials(prev => ({
       ...prev,
       [field]: value
@@ -47,14 +66,15 @@ const Login = ({ onLogin, onGoToRegister }: LoginProps) => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">Usuario</label>
+            <label htmlFor="email">Correo Institucional</label>
             <input
-              id="username"
-              type="text"
-              value={credentials.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              placeholder="Ingresa tu usuario"
+              id="email"
+              type="email"
+              value={credentials.correo_institucional}
+              onChange={(e) => handleInputChange('correo_institucional', e.target.value)}
+              placeholder="usuario@unal.edu.co"
               className={error ? 'error' : ''}
+              disabled={isLoading}
             />
           </div>
 
@@ -63,23 +83,24 @@ const Login = ({ onLogin, onGoToRegister }: LoginProps) => {
             <input
               id="password"
               type="password"
-              value={credentials.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
+              value={credentials.contrasena}
+              onChange={(e) => handleInputChange('contrasena', e.target.value)}
               placeholder="Ingresa tu contraseña"
               className={error ? 'error' : ''}
+              disabled={isLoading}
             />
           </div>
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="login-button">
-            Iniciar Sesión
+          <button type="submit" className="login-button" disabled={isLoading}>
+            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
 
         <div className="register-link">
           <p>¿No tienes una cuenta?</p>
-          <button type="button" onClick={onGoToRegister} className="link-button">
+          <button type="button" onClick={onGoToRegister} className="link-button" disabled={isLoading}>
             Registrarse
           </button>
         </div>
