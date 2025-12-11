@@ -29,7 +29,7 @@
 
 .logo-icon {
   font-size: 2rem;
-  color: var(--primary-color);
+  color: var(--accent-color);
 }
 
 .calculator-header h1 {
@@ -76,6 +76,29 @@
 .actions-section {
   display: flex;
   justify-content: center;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #B89520 100%);
+  color: var(--white);
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid var(--accent-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .clear-button {
@@ -87,9 +110,14 @@
   transition: all 0.2s ease-in-out;
 }
 
-.clear-button:hover {
-  background: #dc2626;
+.clear-button:hover:not(:disabled) {
+  background: #7A1619;
   transform: translateY(-1px);
+}
+
+.clear-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .subjects-section {

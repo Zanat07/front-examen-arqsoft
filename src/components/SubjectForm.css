@@ -56,8 +56,8 @@
 }
 
 .form-group input:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgb(212 175 55 / 0.2);
 }
 
 .form-group input::placeholder {
@@ -89,6 +89,7 @@
   transition: all 0.2s ease-in-out;
   box-shadow: var(--shadow-sm);
   margin-top: var(--spacing-2);
+  border: 1px solid var(--accent-color);
 }
 
 .add-button:hover {

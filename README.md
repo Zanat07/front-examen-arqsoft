@@ -1,15 +1,25 @@
 # 📚 Calculadora de Promedio Académico
 
-Una aplicación web moderna desarrollada con React + TypeScript para calcular el promedio ponderado de materias académicas.
+Una aplicación web moderna desarrollada con React + TypeScript para calcular el promedio ponderado de materias académicas con integración a backend.
 
 ## ✨ Características
 
 - **Login seguro**: Sistema de autenticación simple
 - **Cálculo de promedio ponderado**: Considera tanto las notas como los créditos de cada materia
-- **Interfaz intuitiva**: Diseño limpio y responsivo
-- **Gestión de materias**: Agregar y eliminar materias fácilmente
+- **Integración con Backend**: Envía y persiste datos de materias y cálculos
+- **API REST**: Comunicación completa con el backend (GET, POST, PUT, DELETE)
+- **Interfaz intuitiva**: Diseño limpio y responsivo con identidad visual universitaria
+- **Gestión de materias**: Agregar y eliminar materias con sincronización al backend
 - **Resultados en tiempo real**: El promedio se actualiza automáticamente
-- **Clasificación visual**: Colores que indican el nivel de rendimiento
+- **Clasificación visual**: Colores institucionales que indican el nivel de rendimiento
+
+## 🎨 Identidad Visual
+
+La aplicación utiliza la paleta de colores institucional:
+- **Rojo universitario** (#991B1F) - Color principal
+- **Gris oscuro** (#4A4A4A) - Color secundario  
+- **Dorado** (#D4AF37) - Acentos y elementos destacados
+- **Verde oliva** (#8B9556) - Calificaciones excelentes
 
 ## 🚀 Instalación
 
@@ -22,7 +32,7 @@ Una aplicación web moderna desarrollada con React + TypeScript para calcular el
 1. **Clonar el repositorio**
    ```bash
    git clone <url-del-repositorio>
-   cd grade-calculator-app
+   cd front-examen-arqsoft
    ```
 
 2. **Instalar dependencias**
@@ -32,15 +42,58 @@ Una aplicación web moderna desarrollada con React + TypeScript para calcular el
    yarn install
    ```
 
-3. **Ejecutar en modo desarrollo**
+3. **Configurar variables de entorno**
+   ```bash
+   # Copiar el archivo de ejemplo
+   cp .env.example .env
+   
+   # Editar .env y configurar la URL del backend
+   VITE_API_URL=http://localhost:3000/api
+   ```
+
+4. **Ejecutar en modo desarrollo**
    ```bash
    npm run dev
    # o
    yarn dev
    ```
 
-4. **Abrir en el navegador**
+5. **Abrir en el navegador**
    - La aplicación estará disponible en `http://localhost:5173`
+
+## 🔌 API Backend
+
+La aplicación se comunica con un backend mediante las siguientes endpoints:
+
+### Materias
+- `POST /api/subjects` - Crear una nueva materia
+  ```json
+  {
+    "name": "Matemáticas",
+    "grade": 4.5,
+    "credits": 3
+  }
+  ```
+
+- `GET /api/subjects` - Obtener todas las materias
+- `PUT /api/subjects/:id` - Actualizar una materia
+- `DELETE /api/subjects/:id` - Eliminar una materia
+
+### Cálculos
+- `POST /api/calculations` - Enviar cálculo completo
+  ```json
+  {
+    "subjects": [
+      {
+        "name": "Matemáticas",
+        "grade": 4.5,
+        "credits": 3
+      }
+    ],
+    "totalAverage": 4.5,
+    "totalCredits": 3
+  }
+  ```
 
 ## 🎯 Uso
 

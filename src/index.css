@@ -1,23 +1,23 @@
 :root {
-  /* Color Palette */
-  --primary-color: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #3b82f6;
-  --secondary-color: #64748b;
-  --accent-color: #f59e0b;
+  /* Color Palette - Universidad */
+  --primary-color: #991B1F;
+  --primary-dark: #7A1619;
+  --primary-light: #B82329;
+  --secondary-color: #4A4A4A;
+  --accent-color: #D4AF37;
   
   /* Status Colors */
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --error-color: #ef4444;
-  --info-color: #06b6d4;
+  --success-color: #8B9556;
+  --warning-color: #D4AF37;
+  --error-color: #991B1F;
+  --info-color: #4A4A4A;
   
   /* Grade Colors */
-  --excellent-color: #10b981;
-  --good-color: #3b82f6;
-  --average-color: #f59e0b;
-  --low-color: #f97316;
-  --failing-color: #ef4444;
+  --excellent-color: #8B9556;
+  --good-color: #D4AF37;
+  --average-color: #D4AF37;
+  --low-color: #B86B1F;
+  --failing-color: #991B1F;
   
   /* Neutral Colors */
   --white: #ffffff;
